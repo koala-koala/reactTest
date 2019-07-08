@@ -1,0 +1,102 @@
+简单的router配置：
+step1：安装react-router-dom；
+step2：新建router文件，配置route；
+step3：把入口文件改为App，引入Router；
+
+问题：使用BrowserRouter，二级route刷新页面会404；
+参考：https://blog.csdn.net/zwkkkk1/article/details/83411071
+解决方案：webpack配置devserver添加属性historyApiFallback:true，并设置outputPath: '/'。
+刷新页面404的原因：
+在第一次请求路径（'/'）时，会发送请求到服务器端请求js资源，此时后端会返回包含reactrouter这类的js资源和对应路径的html（index.html）页面到前端，所以第一次请求是不到前端路由的。
+当在页面上点击某个链接（通过react-router的Link，PushState...跳转）时，是不到后端请求资源的，页面跳转完全由前端控制。
+但如果直接在二级路由刷新页面（/test），客户端会向服务器端发送请求，后端服务器找不到对应路由的资源（test文件夹下面的html）就会返回404。
+解决方案设置devserver配置historyApiFallback:true，任意的404响应都会重定向到index.html，仅适合dev环境。
+
+引入antd，webpack配置：
+1、安装antd,less,less-loader,css-loader,style-loader,babel-plugin-import；
+2、babel配置添加plugin引入antd样式库；
+"plugins": [
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "style": true
+      }
+    ]
+  ]
+3、less配置，css配置
+{
+  test: /\.less$/,
+  include: path.resolve("node_modules/antd"),
+  use: [
+    "style-loader",
+    "css-loader",
+    {
+      loader: "less-loader",
+      options: {
+        javascriptEnabled: true // antd3.0以上需要
+      }
+    }
+  ]
+},
+{
+  test: /\.css$/,
+  use: ["style-loader", "css-loader"]
+}
+问题：当多次对less文件进行解析时会: Unrecognised input 
+test: /\.less$/, 两个解析less-loader 
+解决方案:1、删除只剩一个；（不靠谱）
+
+
+react-router-dom源码解析：
+Tips：react-router-dom插件export四个方法BrowserRouter，HashRouter，Link和NavLink；
+
+BrowserRouter：this.history = history.createBrowserHistory(this.props)，封装了一个
+调用history的createBrowserHistory方法；
+
+HashRouter：this.history = history.createHashHistory(this.props)，同上；
+
+Link：创建返回一个a标签，点击触发handleClick: history.push(this.props.to);
+
+NavLink：同Link，多一些选中状态处理；
+
+
+history源码解析：
+createBrowserHistory
+createHashHistory
+createMemoryHistory
+createLocation
+locationsAreEqual
+parsePath
+createPath
+
+
+问题：Link和history.push是如何触发浏览器url改变和页面改变的？
+以react-router提供的Router为例：
+
+1、注册更新ui的回调函数：
+Route组件包含在Router内，Router组件在挂在前，props.history会监听Router组件，
+该监听的回调用以修改当前state的location属性，setState会触发Router组件重新render，
+根据新的location找到对应component渲染。
+if (!props.staticContext) {
+  _this.unlisten = props.history.listen(function (location) {
+    if (_this._isMounted) {
+      _this.setState({
+        location: location
+      });
+    } else {
+      _this._pendingLocation = location;
+    }
+  });
+}
+
+2、点击Link标签时触发history.push或replace方法；
+var method = this.props.replace ? history$$1.replace : history$$1.push;
+method(this.props.to);
+
+3、触发回调：history.push调用时，会显示改变当前url，并触发监听的listener重新渲染页面；
+
+
+问题：react-router-dom 4.3.1和5.0.0
+
+5.0.0使用ConnectedRouter报错

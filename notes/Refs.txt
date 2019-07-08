@@ -1,0 +1,55 @@
+Refs使用场景：
+1、focus dom节点或者节点内容，媒体播放；
+2、触发动画；
+3、使用第三方dom库；
+
+Refs使用方法：
+一、Creating Refs
+class My extends React.Component {
+  constructor(props) {
+    super(props);
+    this.input = React.createRef();
+  }
+  render() {
+    // 如果是html标签则获取到的是dom节点，如果是component，则拿到的是组件本身，但组件必需是class定义的组件，不能是function组件。
+    return <input ref={this.ref} />
+  }
+}
+
+二、Callback Refs
+// 使用行内callback方法在组件update时方法会调用两次，第一次是null，第二次是目标值。因为每次render都会创建一个新的函数对象，react需要先清除老的ref再创建新的。可以把方法提出来写在class里面，但是不会造成太大影响，所以无关紧要。
+
+class A extends React.Component {
+  componentDidMount() {
+    console.log(this.container); // 可以获取到目标node
+  }
+  render() {
+    return <div ref=((node) => this.container = node)></div>
+  }
+}
+
+// 父组件获取子组件节点
+一、Forwarding Refs // react 16.3+
+使用React.forwardRef
+const FancyButton = React.forwardRef((props, ref) => (
+  <button ref={ref} className="FancyButton">
+    {props.children}
+  </button>
+));
+
+// You can now get a ref directly to the DOM button:
+const ref = React.createRef();
+<FancyButton ref={ref}>Click me!</FancyButton>;
+二、16.3以前的替代方法，通过props传值
+function Child(props) {
+  return <input ref={props.inputRef} />
+}
+
+class Parent extends React.Component {
+  getInput = (node) => {
+    this.input = node; // 可以获取到子组件目标node
+  };
+  render() {
+    return <Child inputRef={this.getInput} />
+  }
+}

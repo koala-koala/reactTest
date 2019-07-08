@@ -1,0 +1,22 @@
+新建一个简单的webpack+babel项目步骤：
+step 1：npm init;
+step 2：dev环境安装webpack，webpack-cli(使可以命令行运行webpack),新建webpack配置文件，根目录下创建webpack.config.js;
+step 3：新建入口文件，html模板文件以及打包后存放的文件夹dist，并在webpack.config中配置
+相应的entry,output和plugin里使用插件html-webpack-plugin（非webpack自带插件需dev安装）配置入口html；
+step4:webpack.config配置html模块解析，安装使用html-loader解析html文件；
+step5:webpack.config配置js模块解析，dev安装babel-loader，babel-core(babel核心包)，
+
+此时，项目已经可以打包简单的js和html了，命令行运行webpack后可以看到dist文件夹下面生成了新打包的html和js入口文件。
+
+另外：
+babel的预设和插件使用：配置可写在webpack.config里，babel-loader的options项，也可以写在package.json的babel项里面，最好项目根目录下新建babel配置文件.babelrc,内容为一个对象。
+{
+  "presets": ["@babel/preset-env", "@babel/preset-react"],
+  "plugins": ["@babel/plugin-proposal-class-properties"]
+}
+presets:一些babel plugins的集合。
+presets从后向前执行，plugins顺序执行，plugins执行先于presets。
+@babel/preset-env:可根据环境决定所需的babel插件，默认和babel-preset-lates的行为完全一致。
+@babel/preset-react：react解析所需插件。
+@babel/plugin-proposal-class-properties：使可使用class-properties。
+babel-polyfill：非dev安装babel-polyfill（使可使用promise/weakMap等），使用时需在入口文件引用，确保他在其他任何代码之前被引入进来；

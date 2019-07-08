@@ -1,0 +1,31 @@
+参考文档 https://segmentfault.com/a/1190000007374078
+
+1、package.json scripts配置脚本执行webpack-dev-server
+"start": "webpack-dev-server --open --mode=development",
+webpack.config.js配置devServer
+
+2、node启动webpack-dev-server
+scripts配置脚本 "server": "node ./server.js"，执行启动服务文件
+const webpack = require("webpack");
+const WebpackDevServer = require("webpack-dev-server");
+const config = require("./webpack.config.js");
+
+const compiler = webpack(config); // 生成编译器
+const server = new WebpackDevServer(compiler, {
+  // devServer配置
+  // 此时webpack.config.js里面配置的devServer默认是不会读取的，可以把devServer取出来传入WebpackDevServer的实例
+  publicPath: '/dist/'
+});
+server.listen(8000); // 监听服务
+
+3、热更新 webpack.HotModuleReplacementPlugin
+  a. plugin添加webpack.HotModuleReplacementPlugin，
+  plugins: [new webpack.HotModuleReplacementPlugin({})]
+  b. devServer设置{hot:true},
+  c. entry改成数组，
+  entry: [
+    "webpack/hot/dev-server",
+    `webpack-dev-server/client?http://localhost:${port}`,
+    "./src/index.js"
+  ],
+

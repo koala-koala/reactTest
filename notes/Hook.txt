@@ -1,0 +1,16 @@
+HOOK：function component使用state和生命周期的解决办法，只能在function component中使用。
+
+state hook：useState(初始化参数)，count为定义的变量，setCount为改变count的函数。
+const [count, setCount] = useState(0)
+
+effect hook：useEffect
+useEffect(() => {
+  ChatApi.subsribe(); // 每次render后调用，例：绑定一个函数
+  // 返回一个函数，用于清除每次调用绑定的函数
+  return () => {
+    console.log(`unclicked ${count} times`); 
+  };
+}, params);
+
+params：可传入参数控制render后是否调用，例：传入count，如果count没发生改变则不调用；
+若传入[]空数组，则只在第一次mount和最后unmount的时候调用。

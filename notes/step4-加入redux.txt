@@ -1,0 +1,40 @@
+1、如何动态注入reducer？
+思路：store提供replaceReducer方法可随时替换reducer，只要每次注入时重新替换整个reducer就可以了。
+step1:新建reducers.js，提供createReducer以合并静态的和异步注入的reducer；
+step2:新建configureStore，创建一个store和injectReducer来替换reducer，在页面入口injectReducer。
+
+
+redux源码解析：
+export {
+  createStore,
+  combineReducers,
+  bindActionCreators,
+  applyMiddleware,
+  compose,
+  __DO_NOT_USE__ActionTypes
+}
+
+1、createStore(reducer, preloadedState, enhancer)
+创建一个store；
+若preloadedState不传，自动取第二个参数为enhancer；
+enhancer为中间件等。
+
+return {
+  dispatch, // 参数必须是plainObject,改变当前state,return action
+  subscribe, // dispatch一个action的时候会先触发subscribe
+  getState, // 获取当前state值
+  replaceReducer, // 替换reducer
+  [$$observable]: observable
+}
+
+2、combineReducers(reducers)
+联合reducers（obj），obj参数至少有一个，且值类型为function；
+
+3、bindActionCreators(actionCreators, dispatch)
+
+4、applyMiddleware(...middlewares)
+redux注入中间件，applyMiddleware(thunk, saga, logger);
+
+5、compose(...funcs)
+作用：从右往左执行参数中的函数，并接收上一个函数的结果为参数；
+compose(f1, f2, f3)(params) 等价于 f1(f2(f3(params)))

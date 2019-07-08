@@ -1,0 +1,4 @@
+1、安装redux-thunk;
+2、import { createStore, applyMiddleware } from "redux";
+3、applyMiddleware接收中间件为参数，applyMiddleware(...midWares);
+4、createStore接收中间件applyMiddleware(...midWares)或enhancer为参数，createStore(reducer, initState, enhancer);
