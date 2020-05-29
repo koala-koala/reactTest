@@ -22,12 +22,12 @@ export default (state = initialState, action) => {
 
 export const getList = () => {
   return dispatch => {
-    callApi("/mercury_trade/live_strategy?page=1&page_size=20")
+    callApi("http://uqer.devops2.wmcloud-qa.com/mercury_trade/3.0/live_strategy?page=1&page_size=1000&name=&source=private&audit_status=&category=")
       .then(res => {
         console.log(res);
         dispatch(
           refreshProps({
-            data: res.response.list
+            data: res.response.data
           })
         );
       })

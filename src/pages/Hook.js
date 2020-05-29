@@ -1,8 +1,48 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useReducer, createContext, useContext } from "react";
 import { Link } from "react-router-dom";
+
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+
+  return ref.current;
+}
+const TodosDispatch = createContext(null);
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'updateName':
+      return {
+        ...state,
+        name: action.payload,
+      }
+    default:
+      return state;
+  }
+}
+
+function SubHook({name}) {
+  const dispatch = useContext(TodosDispatch);
+  return (
+    <div>
+      <button onClick={() => {
+        dispatch({
+          type: 'updateName',
+          payload: 'koala',
+        })
+      }}>修改{name}</button>
+    </div>
+  )
+}
 
 export default function Example() {
   const [count, setCount] = useState(0);
+  const prevCount = usePrevious(count);
+  const [state, dispatch] = useReducer(reducer, {
+    name: 'zhangsan',
+  });
 
   useEffect(() => {
     console.log(`clicked ${count} times`);
@@ -12,20 +52,23 @@ export default function Example() {
   }, []);
 
   return (
-    <div>
+    <TodosDispatch.Provider value={dispatch}>
       <Link to="/">首页</Link>
       <p>You clicked {count} times</p>
       <button
         onClick={() => {
           // 还是异步的
-          setTimeout(() => {
-            setCount(count + 1);
-            console.log(count);
-          }, 0);
+          setCount(count + 1);
         }}
       >
-        Click me
+        Click me {prevCount}
       </button>
-    </div>
+      <button onClick={() => {
+        setTimeout(() => {
+          alert(count);
+        }, 3000)
+      }}>show alert</button>
+      <SubHook name={state.name} />
+    </TodosDispatch.Provider>
   );
 }

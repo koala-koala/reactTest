@@ -4,9 +4,12 @@ import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { ConnectedRouter } from "react-router-redux";
 // import { BrowserRouter } from "react-router-dom";
+import 'codemirror/theme/material.css';
+import 'codemirror/lib/codemirror.css';
 import Routes from "./router";
 import cStore from "./configureStore";
 import history from "./history";
+import "./test.css";
 
 export const store = cStore.store;
 

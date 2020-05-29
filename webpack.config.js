@@ -4,6 +4,12 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   entry: "./src/containers/App.js",
   output: {
+    /**
+     * 目标文件输出path+filename
+     * publicPath：浏览器外部资源路径
+     * base(浏览器base) + publicPath + sourceUrl
+     * 自动插入到页面的css、js路径都是filename
+     */
     path: path.resolve(__dirname, "dist"),
     filename: "main.js",
     publicPath: "/"

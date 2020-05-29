@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "http://uqer.ccbfund.cn/";
+axios.defaults.baseURL = "http://uqer.devops2.wmcloud-qa.com";
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common["Content-Type"] = "application/json";
 
